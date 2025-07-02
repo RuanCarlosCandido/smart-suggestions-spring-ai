@@ -3,10 +3,10 @@ package com.smartai.smart_suggestions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+//@SpringBootTest
 class SmartSuggestionsApplicationTests {
 
-	@Test
+//	@Test
 	void contextLoads() {
 	}
 

@@ -1,6 +1,6 @@
 # Smart Suggestions - Spring AI
 
-Projeto backend em Spring Boot 3.2+ com integração de inteligência artificial via Spring AI, documentação Swagger (OpenAPI), monitoramento via Actuator/Admin e banco de dados em memória H2.
+Projeto backend em Spring Boot 3.2+ com integração de inteligência artificial local via [Spring AI + Ollama], documentação Swagger (OpenAPI), monitoramento via Actuator/Admin e banco de dados em memória H2.
 
 ---
 
@@ -8,11 +8,12 @@ Projeto backend em Spring Boot 3.2+ com integração de inteligência artificial
 
 - Java 21+
 - Spring Boot 3.2+
-- Spring AI (`spring-ai-openai-spring-boot-starter`)
+- Spring AI (`spring-ai-ollama-spring-boot-starter`)
 - Springdoc OpenAPI (Swagger UI)
 - Spring Boot Actuator
 - Spring Boot Admin Server
 - H2 Database (em memória)
+- Ollama + Llama3 (modelo de linguagem local, gratuito)
 
 ---
 
@@ -22,9 +23,22 @@ Projeto backend em Spring Boot 3.2+ com integração de inteligência artificial
 
 - JDK 21+
 - Maven 3.9+
-- OpenAI API Key (para funcionalidades de IA)
+- [Ollama](https://ollama.com) instalado
+- Modelo `llama3` disponível localmente
 
-### 2. Executar aplicação
+> Para instalar e iniciar o modelo:
+
+```bash
+curl -fsSL https://ollama.com/install.sh | sh
+ollama pull llama3
+ollama run llama3
+```
+
+> Ollama iniciará em `http://localhost:11434`
+
+---
+
+### 2. Executar aplicação Spring Boot
 
 ```bash
 ./mvnw spring-boot:run
@@ -46,40 +60,69 @@ http://localhost:8080
 | H2 Console             | http://localhost:8080/h2-console       |
 | Spring Boot Admin      | http://localhost:8080                  |
 | Actuator (health, etc) | http://localhost:8080/actuator         |
+| IA (POST)              | http://localhost:8080/api/sugerir      |
 
 ---
 
 ## 🔐 Segurança (dev)
 
-Credenciais padrão para acesso:
+Credenciais padrão para acesso (em dev):
 
 ```
 Usuário: user
-Senha: {gerada dinamicamente quando sobe a aplicação}
+Senha: {gerada automaticamente}
 ```
 
-> Configurável em `application.yaml` ou via classe `SecurityConfig`.
+> Personalizável via `SecurityConfig.java`
 
 ---
 
-## 🧠 Spring AI
+## 🧠 Spring AI com Ollama
 
-Para habilitar integração com OpenAI, adicione ao seu `application.yaml`:
+A IA é fornecida localmente pelo modelo Llama3, rodando via Ollama.
+
+Configuração no `application.yaml`:
 
 ```yaml
 spring:
   ai:
-    openai:
-      api-key: ${OPENAI_API_KEY}
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        model: llama3
 ```
 
-Recomenda-se configurar a variável de ambiente `OPENAI_API_KEY`.
+Nenhum dado é enviado para a nuvem. 100% local e gratuito.
+
+---
+
+## 📦 Exemplo de uso da API
+
+### Requisição:
+
+```http
+POST /api/sugerir
+Content-Type: application/json
+
+{
+  "prompt": "Qual é a capital do Brasil?"
+}
+```
+
+### Resposta:
+
+```json
+{
+  "resposta": "A pergunta fácil!\n\nA capital do Brasil é Brasília!"
+}
+```
 
 ---
 
 ## 📝 TODO
 
-- [ ] Criar controlador para sugestões inteligentes
+- [x] Criar controlador para sugestões inteligentes
+- [x] Conectar IA local com Spring AI
 - [ ] Conectar frontend com endpoint de IA
 - [ ] Persistir logs e métricas com Actuator
 
