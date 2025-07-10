@@ -40,3 +40,7 @@ server:
 spring.boot.admin:
   client:
     url: http://localhost:8080 # se for client e server na mesma app
+
+logging:
+  level:
+    root: INFO
