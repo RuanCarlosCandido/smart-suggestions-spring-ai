@@ -1,4 +1,4 @@
-package com.smartai.smart_suggestions.configuration;
+package com.smartai.configuration;
 
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.ollama.OllamaChatModel;
