@@ -15,20 +15,41 @@ import com.smartai.smart_suggestions.dto.SugerirResponse;
 public class SugerirController {
 
     private final ChatClient chatClient;
-
+    
     @Autowired
     public SugerirController(ChatClient chatClient) {
         this.chatClient = chatClient;
     }
 
+
     @PostMapping
     public SugerirResponse sugerir(@RequestBody SugerirRequest request) {
-        String resposta = chatClient
-                .prompt() // inicia a construção do prompt
-                .user(request.prompt()) // conteúdo do usuário
-                .call() // executa o modelo
-                .content(); // extrai a resposta do assistente
+    String promptFinal = """
+    Você é um assistente especializado em sugestões de produtos.
+    Catálogo:
+    - Relógio esportivo: R$500, resistente à água.
+    - Relógio clássico: R$800, couro legítimo.
+    - Smartwatch com GPS: R$1200, monitoramento de saúde.
 
-        return new SugerirResponse(resposta);
-    }
+    Usuário:
+    Categoria preferida: %s
+    Faixa de preço: %s
+    Comentários adicionais: %s
+
+    Sugira 3 opções e explique brevemente o motivo.
+    """.formatted(
+        request.categoria(), 
+        request.faixaPreco(), 
+        request.comentarios()
+    );
+
+    String resposta = chatClient
+            .prompt()
+            .user(promptFinal)
+            .call()
+            .content();
+
+    // Aqui você poderia parsear a resposta em objetos Java
+    return new SugerirResponse(resposta);
+}
 }
