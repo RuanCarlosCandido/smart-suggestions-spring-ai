@@ -2,7 +2,7 @@ package com.smartai.smart_suggestions.entity;
 
 import java.util.List;
 
-import org.springframework.ai.embedding.Embedding;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -25,12 +25,13 @@ public class Product {
     private String description;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Embedding> embeddings;
 
     public Long getId() {
         return id;
     }
-    
+
     public String getName() {
         return name;
     }
