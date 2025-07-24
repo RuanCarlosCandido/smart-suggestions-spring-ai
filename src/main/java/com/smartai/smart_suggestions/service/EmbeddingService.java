@@ -1,5 +1,6 @@
 package com.smartai.smart_suggestions.service;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.ai.ollama.OllamaEmbeddingModel;
@@ -14,8 +15,9 @@ public class EmbeddingService {
         this.ollamaEmbeddingModel = ollamaEmbeddingModel;
     }
 
-    public float[] generateEmbedding(String text) {
-        List<float[]> embeddings = ollamaEmbeddingModel.embed(List.of(text));
-        return embeddings.get(0); // Pega o primeiro vetor (único, já que passamos um texto só)
+    public String generateEmbedding(String text) {
+        float[] embeddingArray = ollamaEmbeddingModel.embed(List.of(text)).get(0);
+        return Arrays.toString(embeddingArray)
+                .replace(" ", ""); // "[0.1,0.2,...]"
     }
 }

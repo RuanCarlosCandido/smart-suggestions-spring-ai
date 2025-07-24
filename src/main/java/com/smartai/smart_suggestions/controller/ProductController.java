@@ -1,5 +1,6 @@
 package com.smartai.smart_suggestions.controller;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -43,13 +44,19 @@ public class ProductController {
     public Product createProduct(@RequestBody Product product) {
         Product savedProduct = productRepository.save(product);
 
+        String vector = embeddingService.generateEmbedding(
+                product.getName() + " " + product.getDescription());
+
         Embedding embedding = new Embedding();
         embedding.setProduct(savedProduct);
-        embedding.setVector(embeddingService.generateEmbedding(
-                product.getName() + " " + product.getDescription()));
+        embedding.setVector(vector);
         embeddingRepository.save(embedding);
 
         return savedProduct;
+    }
+
+    public String arrayToSqlVector(float[] array) {
+        return Arrays.toString(array).replaceAll("\\s+", "");
     }
 
     @GetMapping("/{id}")
@@ -62,16 +69,19 @@ public class ProductController {
     @PutMapping("/{id}")
     public ResponseEntity<Product> updateProduct(@PathVariable Long id,
             @RequestBody Product productDetails) {
+
         return productRepository.findById(id).map(product -> {
             product.setName(productDetails.getName());
             product.setDescription(productDetails.getDescription());
             Product updatedProduct = productRepository.save(product);
 
+        String vector = embeddingService.generateEmbedding(
+                product.getName() + " " + product.getDescription());
+
             Embedding embedding = embeddingRepository.findByProductId(id)
                     .orElse(new Embedding());
             embedding.setProduct(updatedProduct);
-            embedding.setVector(embeddingService.generateEmbedding(
-                    product.getName() + " " + product.getDescription()));
+            embedding.setVector(vector);
             embeddingRepository.save(embedding);
 
             return ResponseEntity.ok(updatedProduct);

@@ -1,0 +1,48 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/smartai
+    username: smartai_user
+    password: 1234
+    driver-class-name: org.postgresql.Driver
+    initialization-mode: always
+    
+  application:
+    name: smart-suggestion-spring-ai
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+      format_sql: true
+      jdbc:
+        lob:
+          non_contextual_creation: true
+    properties:
+      hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+
+
+  ai:
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        model: llama3
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+server:
+  port: 8080 # porta do server admin, pode ser 8080 mesmo ou outra se você separar
+
+spring.boot.admin:
+  client:
+    url: http://localhost:8080 # se for client e server na mesma app
+
+logging:
+  level:
+    root: INFO

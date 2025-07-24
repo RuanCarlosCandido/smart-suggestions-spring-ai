@@ -1,15 +1,13 @@
 package com.smartai.smart_suggestions.entity;
 
-import java.util.Arrays;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
@@ -30,8 +28,8 @@ public class Embedding {
     @JsonBackReference
     private Product product;
 
-    @Lob
-    private float[] vector;
+    @Column(columnDefinition = "vector(384)", nullable = false)
+    private String vector;
 
     private double similarityScore;
 
@@ -55,11 +53,11 @@ public class Embedding {
         this.product = product;
     }
 
-    public float[] getVector() {
+    public String getVector() {
         return vector;
     }
 
-    public void setVector(float[] vector) {
+    public void setVector(String vector) {
         this.vector = vector;
     }
 
@@ -71,12 +69,4 @@ public class Embedding {
         this.similarityScore = similarityScore;
     }
 
-    @Override
-    public String toString() {
-        return "Embedding{" +
-                "id=" + id +
-                ", similarityScore=" + similarityScore +
-                ", vector=" + Arrays.toString(vector) +
-                '}';
-    }
 }
