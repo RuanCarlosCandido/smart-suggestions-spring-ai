@@ -1,8 +1,11 @@
 package com.smartai.smart_suggestions.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.pgvector.PGvector;
+import com.smartai.smart_suggestions.converter.PGvectorConverter;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,8 +31,9 @@ public class Embedding {
     @JsonBackReference
     private Product product;
 
+    @Convert(converter = PGvectorConverter.class)
     @Column(columnDefinition = "vector(384)", nullable = false)
-    private String vector;
+    private PGvector vector;
 
     private double similarityScore;
 
@@ -53,11 +57,11 @@ public class Embedding {
         this.product = product;
     }
 
-    public String getVector() {
+    public PGvector getVector() {
         return vector;
     }
 
-    public void setVector(String vector) {
+    public void setVector(PGvector vector) {
         this.vector = vector;
     }
 

@@ -1,10 +1,12 @@
 package com.smartai.smart_suggestions.service;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.ai.ollama.OllamaEmbeddingModel;
 import org.springframework.stereotype.Service;
+
+import com.pgvector.PGvector;
 
 @Service
 public class EmbeddingService {
@@ -15,9 +17,14 @@ public class EmbeddingService {
         this.ollamaEmbeddingModel = ollamaEmbeddingModel;
     }
 
-    public String generateEmbedding(String text) {
+    public PGvector generateEmbedding(String text) {
         float[] embeddingArray = ollamaEmbeddingModel.embed(List.of(text)).get(0);
-        return Arrays.toString(embeddingArray)
-                .replace(" ", ""); // "[0.1,0.2,...]"
+
+        List<Float> vectorList = new ArrayList<>();
+        for (float v : embeddingArray) {
+            vectorList.add(v);
+        }
+
+        return new PGvector(vectorList);
     }
 }

@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.pgvector.PGvector;
 import com.smartai.smart_suggestions.entity.Embedding;
 import com.smartai.smart_suggestions.entity.Product;
+import com.smartai.smart_suggestions.repository.EmbeddingCustomRepository;
 import com.smartai.smart_suggestions.repository.EmbeddingRepository;
 import com.smartai.smart_suggestions.repository.ProductRepository;
 import com.smartai.smart_suggestions.service.EmbeddingService;
@@ -26,13 +28,17 @@ public class ProductController {
     private final ProductRepository productRepository;
     private final EmbeddingRepository embeddingRepository;
     private final EmbeddingService embeddingService;
+    private final EmbeddingCustomRepository embeddingCustomRepository;
+
 
     public ProductController(ProductRepository productRepository,
             EmbeddingRepository embeddingRepository,
-            EmbeddingService embeddingService) {
+            EmbeddingService embeddingService,
+            EmbeddingCustomRepository embeddingCustomRepository) {
         this.productRepository = productRepository;
         this.embeddingRepository = embeddingRepository;
         this.embeddingService = embeddingService;
+        this.embeddingCustomRepository = embeddingCustomRepository;
     }
 
     @GetMapping
@@ -44,13 +50,14 @@ public class ProductController {
     public Product createProduct(@RequestBody Product product) {
         Product savedProduct = productRepository.save(product);
 
-        String vector = embeddingService.generateEmbedding(
+        PGvector vector = embeddingService.generateEmbedding(
                 product.getName() + " " + product.getDescription());
 
         Embedding embedding = new Embedding();
         embedding.setProduct(savedProduct);
         embedding.setVector(vector);
-        embeddingRepository.save(embedding);
+
+        embeddingCustomRepository.saveWithVector(embedding);
 
         return savedProduct;
     }
@@ -75,8 +82,9 @@ public class ProductController {
             product.setDescription(productDetails.getDescription());
             Product updatedProduct = productRepository.save(product);
 
-        String vector = embeddingService.generateEmbedding(
-                product.getName() + " " + product.getDescription());
+    PGvector vector = embeddingService.generateEmbedding(
+            product.getName() + " " + product.getDescription());
+
 
             Embedding embedding = embeddingRepository.findByProductId(id)
                     .orElse(new Embedding());
