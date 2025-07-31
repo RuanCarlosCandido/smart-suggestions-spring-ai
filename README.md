@@ -2,19 +2,6 @@
 
 Projeto backend em Spring Boot 3.2+ com integração de inteligência artificial local via [Spring AI + Ollama], documentação Swagger (OpenAPI), monitoramento via Actuator/Admin, e banco relacional com persistência de usuários, produtos e embeddings.
 
-
-## ⚠️ Sobre a busca vetorial
-
-Atualmente, os embeddings são salvos como `String` no campo `vector`, no formato padrão `[0.1,0.2,...]`. Isso permite persistência transparente com JPA, mas **desativa os recursos de busca vetorial nativa do PostgreSQL**, como operadores `<->`, `<#>` e `<=>`.
-
-> ❗ Futuramente, é recomendável:
->
-> - Substituir o tipo da coluna para `vector(384)` novamente.
-> - Usar `@Query` com `CAST(:vector AS vector)` para inserções e comparações.
-> - Ou utilizar JDBC puro com `PGvector` e `PreparedStatement.setObject(...)`.
-
----
-
 ## 🔧 Tecnologias
 
 * Java 21+
@@ -107,6 +94,7 @@ Authorization: Bearer <token>
 | IA (POST)              | [http://localhost:8080/api/sugerir](http://localhost:8080/api/sugerir)         |
 | Products (CRUD)        | [http://localhost:8080/api/products](http://localhost:8080/api/products)       |
 | Users (CRUD)           | [http://localhost:8080/api/users](http://localhost:8080/api/users)             |
+| Produtos similares     | [http://localhost:8080/produtos/similares?productId=37&topK=5](http://localhost:8080/produtos/similares?productId=37&topK=5) |
 
 ---
 
@@ -164,7 +152,7 @@ curl -X GET http://localhost:8080/api/products \
 * [x] Modelar User, Product, Embedding no banco
 * [x] Criar CRUD com embeddings automáticos
 * [x] Persistir embeddings com PGvector (formato compatível com JPA)
-* [ ] Implementar endpoint de similaridade entre produtos
+* [x] Implementar endpoint de similaridade entre produtos
 * [ ] Reativar busca vetorial nativa com pgvector (JDBC/SQL nativo)
 * [ ] Conectar frontend com endpoint de IA
 * [ ] Persistir logs e métricas com Actuator

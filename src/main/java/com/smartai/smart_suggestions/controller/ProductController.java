@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pgvector.PGvector;
+import com.smartai.smart_suggestions.dto.SimilarProductDTO;
 import com.smartai.smart_suggestions.entity.Embedding;
 import com.smartai.smart_suggestions.entity.Product;
 import com.smartai.smart_suggestions.repository.EmbeddingCustomRepository;
@@ -105,4 +107,14 @@ public class ProductController {
         productRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/similares")
+    public ResponseEntity<List<SimilarProductDTO>> buscarSimilares(
+            @RequestParam Long productId,
+            @RequestParam(defaultValue = "5") int topK) {
+
+        var similares = embeddingCustomRepository.buscarProdutosSimilares(productId, topK);
+        return ResponseEntity.ok(similares);
+    }
+
 }
