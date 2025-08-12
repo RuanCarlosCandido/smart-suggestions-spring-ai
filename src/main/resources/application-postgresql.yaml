@@ -20,6 +20,14 @@ spring:
     properties:
       hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
 
+  batch:
+    jdbc:
+      # Em dev, deixar o Spring criar as tabelas de metadados do Batch
+      initialize-schema: always
+    job:
+      # Por padrão o Boot executa todos os jobs na inicialização. Desligue
+      # e dispare manualmente (ou habilite por perfil).
+      enabled: false
 
   ai:
     ollama:
